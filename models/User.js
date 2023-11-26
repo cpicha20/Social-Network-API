@@ -1,4 +1,4 @@
-const { Schema, model } = require('mongoose');
+const { Schema, model } = require("mongoose");
 
 // Schema to create Post model
 const userSchema = new Schema(
@@ -13,19 +13,20 @@ const userSchema = new Schema(
       type: String,
       unique: true,
       required: true,
-      trim: true,
+      match: /^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/,
     },
-    tags: [
+    thoughts: [
       {
-        type: Schema.Types.ObjectId,
-        ref: 'tag',
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "thought",
       },
     ],
-    text: {
-      type: String,
-      minLength: 15,
-      maxLength: 500,
-    },
+    friends: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "user",
+      },
+    ],
   },
   {
     toJSON: {
@@ -36,14 +37,14 @@ const userSchema = new Schema(
 );
 
 // Create a virtual property `tagCount` that gets the amount of comments per user
-postSchema
-  .virtual('tagCount')
+userSchema
+  .virtual("friendCount")
   // Getter
   .get(function () {
-    return this.tags.length;
+    return this.friends.length;
   });
 
 // Initialize our Post model
-const Post = model('post', postSchema);
+const User = model("user", userSchema);
 
-module.exports = Post;
+module.exports = User;

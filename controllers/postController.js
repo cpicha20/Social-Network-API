@@ -1,12 +1,10 @@
-const { Post } = require('../models');
+const { User } = require('../models');
 
 module.exports = {
-  async getPosts(req, res) {
+  async getUser(req, res) {
     try {
-      const posts = await Post.find()
-        .populate({ path: 'tags', select: '-__v' });
-
-      res.json(posts);
+      const user = await User.find()
+      res.json(user);
     } catch (err) {
       console.error({ message: err });
       res.status(500).json(err);
@@ -14,25 +12,52 @@ module.exports = {
   },
   async getSinglePost(req, res) {
     try {
-      const post = await Post.findOne({ _id: req.params.postId })
-        .populate({ path: 'tags', select: '-__v' });
+      const user = await User.findOne({ _id: req.params.userId })
+      .select('-__v')
+      .populate('friends')
+      .populate('thoughts');
 
-      if (!post) {
-        return res.status(404).json({ message: 'No post with that ID' });
+      if (!user) {
+        return res.status(404).json({ message: 'No user with that ID' });
       }
 
-      res.json(post);
+      res.json(user);
     } catch (err) {
       res.status(500).json(err);
     }
   },
   // create a new post
-  async createPost(req, res) {
+  async createUser(req, res) {
     try {
-      const post = await Post.create(req.body);
-      res.json(post);
+      const user = await User.create(req.body);
+      res.json(user);
     } catch (err) {
+      console.log(err);
       res.status(500).json(err);
     }
   },
+  async updateUser(req, res) {
+    try {
+      const dbUserData = await User.findOneAndUpdate(
+        { _id: req.params.userId },
+        {
+          $set: req.body,
+        },
+        {
+          runValidators: true,
+          new: true,
+        }
+      );
+
+      if (!dbUserData) {
+        return res.status(404).json({ message: 'No user with this id!' });
+      }
+
+      res.json(dbUserData);
+    } catch (err) {
+      console.log(err);
+      res.status(500).json(err);
+    }
+  },
+
 };
