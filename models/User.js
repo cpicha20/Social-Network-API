@@ -17,14 +17,14 @@ const userSchema = new Schema(
     },
     thoughts: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "thought",
+        type: Schema.Types.ObjectId,
+        ref: "Thought",
       },
     ],
     friends: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "user",
+        type: Schema.Types.ObjectId,
+        ref: "User",
       },
     ],
   },
@@ -43,6 +43,6 @@ userSchema
   });
 
 
-const User = model("user", userSchema);
+const User = model("User", userSchema);
 
 module.exports = User;

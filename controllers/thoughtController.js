@@ -1,4 +1,4 @@
-const { Tags, Post } = require("../models");
+const { Thought, User } = require("../models");
 
 module.exports = {
   async getThoughts(req, res) {
@@ -46,7 +46,7 @@ module.exports = {
     }
   },
   async updateThought(req, res) {
-    const thought = await Thought.findOneAndUpdate(
+    try{const thought = await Thought.findOneAndUpdate(
       { _id: req.params.thoughtId },
       { $set: req.body },
       { runValidators: true, new: true }
@@ -58,8 +58,10 @@ module.exports = {
 
     res.json(thought);
 
-    console.log(err);
-    res.status(500).json(err);
+  }catch (err) {
+      console.log(err);
+      res.status(500).json(err);
+    }
   },
   async deleteThought(req, res) {
     try {
